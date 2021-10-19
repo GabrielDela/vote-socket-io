@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Travel bucket list</title>
+  <!-- Latest compiled and minified CSS -->
+  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+
+  <!-- Scripts -->
+  <script src="https://cdn.socket.io/4.2.0/socket.io.min.js"
+    integrity="sha384-PiBR5S00EtOj2Lto9Uu81cmoyZqR57XcOna1oAuVuIEjzj0wpqDVfD0JA9eXlRsj"
+    crossorigin="anonymous"></script>
+</head>
+
+<body style="width: 100vw; height: 100vh;">
+
+  <div id="wait" class="flex w-full sm:w-2/3 h-full m-auto items-center">
+    <div class="flex flex-col w-full">
+      <h1 class="w-full text-center text-4xl text-gray-700 uppercase font-bold">En attente d'un Poll !</h1>
+    </div>
+  </div>
+
+  <div id="app" class="flex w-full sm:w-2/3 h-full m-auto items-center hidden">
+    <div class="flex flex-col w-full">
+
+      <h1 class="w-full text-center text-2xl text-gray-700 uppercase font-bold">Votez !</h1>
+
+      <h1 id="pollQuestion" class="w-full text-center text-3xl text-gray-700 font-bold my-6">Game of Throne OU Spider
+        Man 3 ?</h1>
+
+      <h1 id="pollName" class="w-full text-center text-3xl text-gray-700 font-bold my-6">Game of Throne OU Spider Man 3
+        ?</h1>
+
+      <div class="flex w-full py-6">
+        <button id="btn1"
+          class="w-1/2 h-96 bg-red-400 mx-4 rounded shadow-xl text-xl uppercase font-semibold text-white hover:bg-red-300 transition"
+          value="choix1">
+          <div id="btn1-txt">Choix 1</div>
+          <div id="btn1-vote" class="text-base font-light">0 votes</div>
+        </button>
+        <button id="btn2"
+          class="w-1/2 h-96 bg-indigo-400 mx-4 rounded shadow-xl text-xl uppercase font-semibold text-white hover:bg-indigo-300 transition"
+          value="choix2">
+          <div id="btn2-txt">Choix 1</div>
+          <div id="btn2-vote" class="text-base font-light">0 votes</div>
+        </button>
+      </div>
+
+      <h1 id="time-left" class="w-full text-center text-2xl font-bold py-4">0 Secondes restantes</h1>
+
+      <h1 id="nbPlayers" class="w-full text-center text-xl font-bold py-4">0 Participants</h1>
+    </div>
+
+  </div>
+
+  <script>
+
+    const socket = io();
+
+    var btn1 = document.getElementById('btn1');
+    var btn2 = document.getElementById('btn2');
+
+    socket.on('initData', (response) => {
+      document.getElementById('nbPlayers').innerHTML = response.nbPlayers + " Participants";
+
+      let data = response.actualPoll;
+      if (data != null) {
+        var wait = document.getElementById('wait');
+        wait.classList.add("hidden");
+        var app = document.getElementById('app');
+        app.classList.remove("hidden");
+        document.getElementById('pollName').innerHTML = data.name;
+        document.getElementById('pollQuestion').innerHTML = data.question;
+        document.getElementById('btn1-txt').innerHTML = data.proposition1;
+        document.getElementById('btn2-txt').innerHTML = data.proposition2;
+
+        document.getElementById('btn1-vote').innerHTML = data.vote1 + " votes";
+        document.getElementById('btn2-vote').innerHTML = data.vote2 + " votes";
+
+        document.getElementById('time-left').innerHTML = data.timeleft + " Secondes restantes";
+      };
+    });
+
+    socket.emit('retrieveData', null);
+
+    btn1.addEventListener('click', function () {
+      if (localStorage.getItem('vote') == "false") {
+        socket.emit('button', 1);
+        localStorage.setItem('vote', "true");
+      }
+    });
+
+    btn2.addEventListener('click', function () {
+      if (localStorage.getItem('vote') == "false") {
+        socket.emit('button', 2);
+        localStorage.setItem('vote', "true");
+      }
+    });
+
+    socket.on('pollStarted', (data) => {
+      localStorage.setItem('vote', "false");
+    });
+
+    socket.on('result', (data) => {
+      document.getElementById('time-left').innerHTML = data;
+    });
+
+
+  </script>
+  <!-- <script src="js/main.js"></script> -->
+</body>
+
+</html>

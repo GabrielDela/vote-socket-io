@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Travel bucket list</title>
+  <!-- Latest compiled and minified CSS -->
+  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+
+  <!-- Scripts -->
+  <script src="https://cdn.socket.io/4.2.0/socket.io.min.js"
+    integrity="sha384-PiBR5S00EtOj2Lto9Uu81cmoyZqR57XcOna1oAuVuIEjzj0wpqDVfD0JA9eXlRsj"
+    crossorigin="anonymous"></script>
+  <script>
+    const socket = io();
+  </script>
+</head>
+
+<body style="width: 100vw; height: 100vh;">
+  <div class="flex w-full sm:w-2/3 h-full m-auto items-center">
+    <div class="flex flex-col w-full">
+
+
+      <h1 class="w-full text-center text-2xl text-gray-700 uppercase font-bold">Creez votre Poll !</h1>
+
+      <h1 class="w-full text-center text-3xl text-gray-700 font-bold my-6 hidden">** OU ** ?</h1>
+
+      <input type="text" id="question" class="mx-4 bg-gray-600 shadow-xl my-4 text-white rounded p-2" placeholder="Posez votre question ici ...">
+
+      <div class="flex w-full py-6">
+        <button id="btn1" disabled
+          class="w-1/2 h-96 bg-red-400 mx-4 rounded shadow-xl text-xl uppercase font-semibold text-white transition"
+          value="choix2">
+          <input type="text" id="proposition1" class="p-2 text-gray-900">
+          <div class="text-base font-light hidden">23 votes</div>
+        </button>
+        <button id="btn2" disabled
+          class="w-1/2 h-96 bg-indigo-400 mx-4 rounded shadow-xl text-xl uppercase font-semibold text-white transition"
+          value="choix2">
+          <input type="text" id="proposition2" class="p-2 text-gray-900">
+          <div class="text-base font-light hidden">23 votes</div>
+        </button>
+      </div>
+
+      <button id="start"
+        class="mx-auto bg-gray-600 text-white my-4 py-2 px-6 rounded hover:bg-gray-500 transition">Commencer</button>
+
+      <h1 class="w-full text-center text-2xl font-bold py-4 hidden">30 Secondes restantes</h1>
+
+      <h1 class="w-full text-center text-xl font-bold py-4 hidden">12 Participants</h1>
+    </div>
+
+  </div>
+
+  <script>
+
+    // var btn1 = document.getElementById('btn1');
+    // var btn2 = document.getElementById('btn2');
+
+    var proposition1 = document.getElementById('proposition1');
+    var proposition2 = document.getElementById('proposition2');
+    var question = document.getElementById('question');
+
+    var startBtn = document.getElementById('start');
+
+    startBtn.addEventListener('click', function () {
+      if (proposition1.value != "" && proposition2.value != "" && question.value != "") {
+        socket.emit('pollCreated', {question: question.value, proposition1: proposition1.value, proposition2: proposition2.value});
+      }
+      else {
+        alert('Veuillez renseigner tout les champs');
+      }
+    });
+
+    // btn1.addEventListener('click', function () {
+    //   socket.emit('button', 1);
+    // });
+
+    // btn2.addEventListener('click', function () {
+    //   socket.emit('button', 2);
+    // });
+
+  </script>
+  <!-- <script src="js/main.js"></script> -->
+</body>
+
+</html>
