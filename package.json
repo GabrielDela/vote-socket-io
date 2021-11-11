@@ -1,4 +1,14 @@
 {
+    "name": "back-end",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "nodemon server.js"
+    },
+    "author": "",
+    "license": "ISC",
     "dependencies": {
         "express": "^4.17.1",
         "jquery": "^3.6.0",
@@ -9,9 +19,5 @@
         "autoprefixer": "^10.4.0",
         "postcss": "^8.3.11",
         "tailwindcss": "^2.2.19"
-    },
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "nodemon server.js"
     }
 }
