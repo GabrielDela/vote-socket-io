@@ -1,13 +1,17 @@
 {
-  "dependencies": {
-    "express": "^4.17.1",
-    "jquery": "^3.6.0",
-    "nodemon": "^2.0.14",
-    "socket.io": "^4.3.2"
-  },
-  "devDependencies": {
-    "autoprefixer": "^10.4.0",
-    "postcss": "^8.3.11",
-    "tailwindcss": "^2.2.19"
-  }
+    "dependencies": {
+        "express": "^4.17.1",
+        "jquery": "^3.6.0",
+        "nodemon": "^2.0.14",
+        "socket.io": "^4.3.2"
+    },
+    "devDependencies": {
+        "autoprefixer": "^10.4.0",
+        "postcss": "^8.3.11",
+        "tailwindcss": "^2.2.19"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "nodemon server.js"
+    },
 }
