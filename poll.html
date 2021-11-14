@@ -173,7 +173,7 @@
                 $('#delete').addClass('hidden');
             }
 
-            $('#sessionID_main').textContent = "Aucune session lancée !";
+            $('#sessionID_main')[0].innerHTML = "Aucune session lancée !";
         });
 
         socket.on('nbConnected', (nbConnected) => {
