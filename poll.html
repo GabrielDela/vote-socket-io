@@ -39,6 +39,12 @@
             <i class="fa fa-envelope m-auto bg-white rounded-full p-10 py-8 mx-auto" style="box-shadow: 0px 0px 20px 2px #838383; color: black; font-size: 35px; background-color: white; mix-blend-mode: lighten; line-height: 0;" aria-hidden="true"><div class="pl-16 text-3xl font-semibold tracking-wider" style="line-height: 0;">Vote.io</div></i>
         </div>
 
+        <div class="flex pb-4">
+            <span id="sessionID_main" class="mx-auto bg-gray-100 font-semibold text-center rounded-full px-4 py-2 shadow-2xl m-2 text-gray-600">
+                Aucune session lancée !
+            <span>
+        </div>
+
         <div class="flex flex-col w-full sm:w-3/5 xl:w-1/3 mx-auto">
             <input id="question" type="text" placeholder="Rouge ou vert ?" class="mx-auto my-4 w-4/5 shadow-2xl p-4 rounded">
 
@@ -122,17 +128,36 @@
                     alert("La longueur de la question est trop grande (250 charactères), ou bien les réponses possibles sont trop longues (100 charactères).");
                 } else {
 
-                    sessionID = makeid(5);
+                    if(sessionID != null){
+                        socket.emit('next_poll', {
+                            sessionID: sessionID,
+                            client_UUID: client_UUID,
+                            question: $('#question')[0].value,
+                            vote1: $('#txt_vote1')[0].value,
+                            vote2: $('#txt_vote2')[0].value,
+                        });
 
-                    socket.emit('create_poll', {
-                        sessionID: sessionID,
-                        client_UUID: client_UUID,
-                        question: $('#question')[0].value,
-                        vote1: $('#txt_vote1')[0].value,
-                        vote2: $('#txt_vote2')[0].value,
-                    });
+                        
+                    }
+                    else{
+                        sessionID = makeid(5);
 
+                        socket.emit('create_poll', {
+                            sessionID: sessionID,
+                            client_UUID: client_UUID,
+                            question: $('#question')[0].value,
+                            vote1: $('#txt_vote1')[0].value,
+                            vote2: $('#txt_vote2')[0].value,
+                        });
+                    }
+                    
+                    $('#pop_nbConnectedSession').removeClass('hidden');
+                    $('#create_poll').addClass('hidden');
+                    $('#game').removeClass('hidden');
+                    $('#delete').removeClass('hidden');
+            
                     $("#sessionID")[0].innerHTML = "Session : " + sessionID;
+                    $("#sessionID_main")[0].innerHTML = "Session : " + sessionID;
                 }
             } else {
                 alert("Veuillez renseigner tout les champs demandés !");
@@ -197,6 +222,15 @@
                     return;
                 }
             });
+
+            if (data.result != null) {
+                alert(data.result);
+
+                $('#pop_nbConnectedSession').addClass('hidden');
+                $('#create_poll').removeClass('hidden');
+                $('#game').addClass('hidden');
+                $('#delete').addClass('hidden');
+            }
         });
 
         $('#vote1')[0].addEventListener('click', e => {

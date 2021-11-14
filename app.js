@@ -104,6 +104,39 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('next_poll', (data) => {
+        const session = sessions.find(element => element.sessionID == data.sessionID);
+        if (data != null) {
+            session.question = data.question;
+            session.proposition1 = data.vote1;
+            session.proposition2 = data.vote2;
+            session.vote1 = 0;
+            session.vote2 = 0;
+            session.timeleft = 45;
+            session.votes = [];
+            session.result = null;
+        };
+
+        io.to(session.sessionID).emit('data_loader', session);
+
+        function handle() {
+            session.timeleft--;
+            io.to(session.sessionID).emit('data_loader', session);
+
+            if (session.timeleft > 0) {
+                setTimeout(handle, 1000);
+            } else {
+                let response = (session.vote1 == session.vote2 ? "Égalité des votes" :
+                    (session.vote1 > session.vote2 ? "Le choix '" + session.proposition1 + "' à été voté." : "Le choix '" + session.proposition2 + "' à été voté."))
+                response += " En attente d'un nouveau vote ...";
+
+                session.result = response;
+                io.to(session.sessionID).emit('data_loader', session);
+            }
+        }
+        setTimeout(handle, 1000);
+    });
+
     socket.on('create_poll', (data) => {
         if (data != null) {
             var session = {
@@ -114,9 +147,10 @@ io.on('connection', (socket) => {
                 proposition2: data.vote2,
                 vote1: 0,
                 vote2: 0,
-                timeleft: 30,
+                timeleft: 45,
                 votes: [],
-                admin: data.client_UUID
+                admin: data.client_UUID,
+                result: null,
             };
 
             sessions.push(session);
@@ -144,13 +178,13 @@ io.on('connection', (socket) => {
                 } else {
                     let response = (session.vote1 == session.vote2 ? "Égalité des votes" :
                         (session.vote1 > session.vote2 ? "Le choix '" + session.proposition1 + "' à été voté." : "Le choix '" + session.proposition2 + "' à été voté."))
-                    io.to(session.sessionID).emit('result', response);
+                    response += " En attente d'un nouveau vote ...";
 
-                    session = null;
+                    session.result = response;
+                    io.to(session.sessionID).emit('data_loader', session);
                 }
             }
             setTimeout(handle, 1000);
-
         }
     });
 

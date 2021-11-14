@@ -128,6 +128,7 @@
                             sessionID: $('#sessionID')[0].value,
                             client_UUID: client_UUID,
                         });
+
                     } else {
                         alert("ID de session requis pour se connecter !");
                     }
@@ -145,6 +146,14 @@
             $('#leave').addClass('hidden');
 
             sessionID = null;
+        });
+
+        socket.on('error', message => {
+            alert(message);
+        });
+
+        socket.on('result', data => {
+            alert(data);
         });
 
         socket.on("deleted_session", () => {
@@ -194,6 +203,14 @@
                     return;
                 }
             });
+
+            if (data.result != null) {
+                alert(data.result);
+            }
+        });
+
+        socket.on('result', response => {
+            alert(response);
         });
 
         $('#vote1')[0].addEventListener('click', e => {
