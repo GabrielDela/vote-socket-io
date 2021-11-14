@@ -172,6 +172,8 @@
                 $('#create_poll').removeClass('hidden');
                 $('#delete').addClass('hidden');
             }
+
+            $('#sessionID_main').textContent = "Aucune session lancée !";
         });
 
         socket.on('nbConnected', (nbConnected) => {
